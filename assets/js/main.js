@@ -55,7 +55,7 @@
                 message
             );
 
-            window.location.href = 'mailto:info@manvarg.se?subject=' + subject + '&body=' + body;
+            window.location.href = 'mailto:ulf@manvarg.se?subject=' + subject + '&body=' + body;
         });
     }
 
