@@ -10,6 +10,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        #matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .hero { position: relative; }
+        .hero-bg { z-index: 1; }
+        .hero-content { z-index: 2; position: relative; }
+    </style>
 </head>
 <body>
 
@@ -35,6 +48,7 @@
 
     <!-- Hero -->
     <header class="hero">
+        <canvas id="matrix-canvas"></canvas>
         <div class="hero-bg"></div>
         <div class="container hero-content">
             <img src="assets/images/logo-white.png" alt="Manvarg AB" class="hero-logo">
@@ -252,7 +266,7 @@
         <div class="container footer-content">
             <div class="footer-brand">
                 <img src="assets/images/logo-white.png" alt="Manvarg AB" class="footer-logo">
-                <p>&copy; 2025 Manvarg AB. Alla rättigheter förbehållna.</p>
+                <p>&copy; <span id="copyright-year"></span> Manvarg AB. Alla rättigheter förbehållna.</p>
             </div>
             <div class="footer-links">
                 <a href="#expertis">Expertis</a>
@@ -264,5 +278,221 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+    <script>
+    // Auto-update copyright year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+    // Matrix-style animation with server <-> camera communication
+    (function() {
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles, columns, rainDrops;
+
+        const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+        const greenColor = { r: 0, g: 255, b: 65 };
+
+        // Server and camera positions (relative)
+        let serverX, serverY, cameraX, cameraY;
+        let dataPackets = [];
+
+        function resize() {
+            w = canvas.width = canvas.parentElement.offsetWidth;
+            h = canvas.height = canvas.parentElement.offsetHeight;
+            const fontSize = 14;
+            columns = Math.floor(w / fontSize);
+            rainDrops = new Array(columns).fill(0).map(() => Math.random() * -100);
+
+            // Server on left, camera on right
+            serverX = w * 0.18;
+            serverY = h * 0.55;
+            cameraX = w * 0.82;
+            cameraY = h * 0.45;
+        }
+
+        function createPacket(fromServer) {
+            const startX = fromServer ? serverX : cameraX;
+            const startY = fromServer ? serverY : cameraY;
+            const endX = fromServer ? cameraX : serverX;
+            const endY = fromServer ? cameraY : serverY;
+            return {
+                x: startX, y: startY,
+                endX, endY,
+                progress: 0,
+                speed: 0.003 + Math.random() * 0.004,
+                char: matrixChars[Math.floor(Math.random() * matrixChars.length)],
+                size: 10 + Math.random() * 6,
+                opacity: 0.4 + Math.random() * 0.5,
+                trail: [],
+                curveOffset: (Math.random() - 0.5) * 80
+            };
+        }
+
+        function drawServer(x, y) {
+            ctx.save();
+            const sw = 70, sh = 90;
+            // Server rack
+            ctx.strokeStyle = 'rgba(0, 255, 65, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.fillStyle = 'rgba(0, 255, 65, 0.03)';
+            ctx.fillRect(x - sw/2, y - sh/2, sw, sh);
+            ctx.strokeRect(x - sw/2, y - sh/2, sw, sh);
+            // Drive bays
+            for (let i = 0; i < 4; i++) {
+                const by = y - sh/2 + 8 + i * 20;
+                ctx.strokeStyle = 'rgba(0, 255, 65, 0.3)';
+                ctx.strokeRect(x - sw/2 + 8, by, sw - 16, 14);
+                // Blinking LED
+                ctx.fillStyle = `rgba(0, 255, 65, ${0.3 + Math.random() * 0.7})`;
+                ctx.fillRect(x + sw/2 - 14, by + 4, 4, 6);
+            }
+            // Label
+            ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
+            ctx.font = 'bold 9px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('VMS', x, y + sh/2 + 14);
+            ctx.restore();
+        }
+
+        function drawCamera(x, y) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 255, 65, 0.4)';
+            ctx.lineWidth = 1.5;
+            // Camera body
+            ctx.fillStyle = 'rgba(0, 255, 65, 0.03)';
+            ctx.beginPath();
+            ctx.moveTo(x - 30, y - 15);
+            ctx.lineTo(x + 15, y - 20);
+            ctx.lineTo(x + 15, y + 20);
+            ctx.lineTo(x - 30, y + 15);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            // Lens
+            ctx.beginPath();
+            ctx.moveTo(x + 15, y - 12);
+            ctx.lineTo(x + 35, y - 8);
+            ctx.lineTo(x + 35, y + 8);
+            ctx.lineTo(x + 15, y + 12);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 255, 65, 0.06)';
+            ctx.fill();
+            ctx.stroke();
+            // Lens glass
+            ctx.beginPath();
+            ctx.arc(x + 35, y, 6, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(0, 255, 65, ${0.3 + Math.random() * 0.4})`;
+            ctx.stroke();
+            // IR LED indicator
+            ctx.fillStyle = `rgba(0, 255, 65, ${0.4 + Math.random() * 0.6})`;
+            ctx.beginPath();
+            ctx.arc(x + 35, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            // Mount
+            ctx.strokeStyle = 'rgba(0, 255, 65, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(x - 30, y);
+            ctx.lineTo(x - 45, y - 25);
+            ctx.stroke();
+            // Label
+            ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
+            ctx.font = 'bold 9px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('CAMERA', x, y + 40);
+            ctx.restore();
+        }
+
+        function draw() {
+            // Semi-transparent black for trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.fillRect(0, 0, w, h);
+
+            const fontSize = 14;
+
+            // Matrix rain (subtle background)
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < columns; i++) {
+                const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                const x = i * fontSize;
+                const y = rainDrops[i] * fontSize;
+
+                // Dimmer rain in the middle where content is
+                const centerDist = Math.abs(x - w/2) / (w/2);
+                const opacity = 0.04 + centerDist * 0.06;
+
+                ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+                ctx.fillText(char, x, y);
+
+                if (y > h && Math.random() > 0.98) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i] += 0.3;
+            }
+
+            // Draw server and camera
+            drawServer(serverX, serverY);
+            drawCamera(cameraX, cameraY);
+
+            // Spawn new packets
+            if (Math.random() > 0.94) {
+                dataPackets.push(createPacket(Math.random() > 0.3));
+            }
+
+            // Update and draw packets
+            dataPackets = dataPackets.filter(p => p.progress <= 1);
+            for (const p of dataPackets) {
+                p.progress += p.speed;
+
+                // Bezier curve path
+                const t = p.progress;
+                const midX = (p.x + p.endX) / 2;
+                const midY = (p.y + p.endY) / 2 + p.curveOffset;
+
+                const cx = (1-t)*(1-t)*p.x + 2*(1-t)*t*midX + t*t*p.endX;
+                const cy = (1-t)*(1-t)*p.y + 2*(1-t)*t*midY + t*t*p.endY;
+
+                // Trail
+                p.trail.push({x: cx, y: cy});
+                if (p.trail.length > 12) p.trail.shift();
+
+                // Draw trail
+                for (let i = 0; i < p.trail.length; i++) {
+                    const tp = p.trail[i];
+                    const trailOpacity = (i / p.trail.length) * p.opacity * 0.4;
+                    ctx.fillStyle = `rgba(0, 255, 65, ${trailOpacity})`;
+                    ctx.font = `${p.size * 0.7}px monospace`;
+                    const trailChar = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    ctx.fillText(trailChar, tp.x, tp.y);
+                }
+
+                // Draw main character
+                const glow = p.opacity * (0.7 + Math.sin(Date.now() * 0.01) * 0.3);
+                ctx.fillStyle = `rgba(0, 255, 65, ${glow})`;
+                ctx.font = `bold ${p.size}px monospace`;
+                p.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                ctx.fillText(p.char, cx, cy);
+
+                // Glow effect
+                ctx.shadowColor = 'rgba(0, 255, 65, 0.5)';
+                ctx.shadowBlur = 8;
+                ctx.fillText(p.char, cx, cy);
+                ctx.shadowBlur = 0;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Initialize with some packets
+        for (let i = 0; i < 8; i++) {
+            const p = createPacket(Math.random() > 0.3);
+            p.progress = Math.random() * 0.8;
+            dataPackets.push(p);
+        }
+
+        draw();
+    })();
+    </script>
 </body>
 </html>
