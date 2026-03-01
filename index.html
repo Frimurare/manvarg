@@ -8,20 +8,186 @@
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
+        /* Scan-line overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
         #matrix-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
         }
         .hero { position: relative; }
         .hero-bg { z-index: 1; }
         .hero-content { z-index: 2; position: relative; padding-top: 70px; }
+
+        /* Typewriter cursor */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: rgba(0, 255, 65, 0.8);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink-cursor 0.8s step-end infinite;
+        }
+        @keyframes blink-cursor {
+            50% { opacity: 0; }
+        }
+
+        /* Glitch effect on section titles */
+        .section-title, .detail-text h2 {
+            position: relative;
+        }
+        .section-title:hover, .detail-text h2:hover {
+            animation: glitch-text 0.3s ease;
+        }
+        @keyframes glitch-text {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+            40% { transform: translate(2px, -1px); }
+            60% { transform: translate(-1px, -1px); filter: hue-rotate(0deg); }
+            80% { transform: translate(1px, 1px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Card scan line on hover */
+        .service-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.6), transparent);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3), 0 0 30px rgba(0, 255, 65, 0.1);
+            transition: none;
+        }
+        .service-card:hover::before {
+            animation: card-scan 1.5s ease-in-out;
+        }
+        @keyframes card-scan {
+            0% { top: -2%; }
+            100% { top: 102%; }
+        }
+
+        /* Tech border glow on cards */
+        .service-card:hover {
+            border-color: rgba(0, 255, 65, 0.15) !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.02), 0 0 1px rgba(0, 255, 65, 0.1) !important;
+        }
+
+        /* HUD-style corner brackets on hero */
+        .hero-content::before,
+        .hero-content::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-color: rgba(0, 255, 65, 0.15);
+            border-style: solid;
+            pointer-events: none;
+        }
+        .hero-content::before {
+            top: 50px;
+            left: 0;
+            border-width: 1px 0 0 1px;
+        }
+        .hero-content::after {
+            bottom: 60px;
+            right: 0;
+            border-width: 0 1px 1px 0;
+        }
+
+        /* Subtle green accent on hero tagline */
+        .hero-tagline {
+            font-family: 'JetBrains Mono', 'Inter', monospace !important;
+            font-size: 1rem !important;
+            letter-spacing: 0.05em !important;
+            color: rgba(0, 255, 65, 0.5) !important;
+        }
+
+        /* Red Skynet eye pulse on contact CTA */
+        .nav-link-cta {
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link-cta::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.15), transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        .nav-link-cta:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        /* Animated border on visual cards */
+        .visual-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .visual-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 65, 0.08), transparent, transparent);
+            animation: rotate-border 8s linear infinite;
+        }
+        .visual-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes rotate-border {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Status indicator in footer */
+        .system-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(0, 255, 65, 0.5);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            background: rgba(0, 255, 65, 0.7);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.4; box-shadow: 0 0 2px rgba(0, 255, 65, 0.3); }
+            50% { opacity: 1; box-shadow: 0 0 8px rgba(0, 255, 65, 0.6); }
+        }
     </style>
 </head>
 <body>
@@ -52,7 +218,7 @@
         <div class="hero-bg"></div>
         <div class="container hero-content">
             <img src="assets/images/logo-white.png" alt="Manvarg AB" class="hero-logo">
-            <p class="hero-tagline">Oberoende enterprise-konsulting inom storskalig kameraövervakning</p>
+            <p class="hero-tagline" id="hero-tagline"></p>
             <div class="hero-buttons">
                 <a href="#expertis" class="btn btn-primary">Vår expertis</a>
                 <a href="#kontakt" class="btn btn-outline">Boka konsultation</a>
@@ -269,6 +435,7 @@
                 <p>&copy; <span id="copyright-year"></span> Manvarg AB. Alla rättigheter förbehållna.</p>
             </div>
             <div class="footer-links">
+                <span class="system-status"><span class="status-dot"></span>System online</span>
                 <a href="#expertis">Expertis</a>
                 <a href="#tjänster">Tjänster</a>
                 <a href="#approach">Arbetssätt</a>
@@ -282,17 +449,40 @@
     // Auto-update copyright year
     document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-    // Matrix-style animation with server <-> camera communication
+    // Typewriter effect for hero tagline
+    (function() {
+        const el = document.getElementById('hero-tagline');
+        const text = 'Oberoende enterprise-konsulting inom storskalig kameraövervakning';
+        let i = 0;
+        const cursor = document.createElement('span');
+        cursor.className = 'typewriter-cursor';
+        el.appendChild(cursor);
+
+        function type() {
+            if (i < text.length) {
+                el.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+                i++;
+                setTimeout(type, 35 + Math.random() * 25);
+            } else {
+                // Keep cursor blinking for a while, then remove
+                setTimeout(() => cursor.style.display = 'none', 4000);
+            }
+        }
+        setTimeout(type, 800);
+    })();
+
+    // Matrix/Skynet-style animation with HUD overlay
     (function() {
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-        let w, h, particles, columns, rainDrops;
+        let w, h, columns, rainDrops;
+        let frameCount = 0;
 
         const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
 
-        // Server and camera positions (relative)
         let serverX, serverY, cameraX, cameraY;
         let dataPackets = [];
+        let scanAngle = 0;
 
         // Load images
         const dcImg = new Image();
@@ -309,8 +499,6 @@
             const fontSize = 14;
             columns = Math.floor(w / fontSize);
             rainDrops = new Array(columns).fill(0).map(() => Math.random() * -100);
-
-            // Server on left, camera on right
             serverX = w * 0.18;
             serverY = h * 0.55;
             cameraX = w * 0.82;
@@ -322,17 +510,179 @@
             const startY = fromServer ? serverY : cameraY;
             const endX = fromServer ? cameraX : serverX;
             const endY = fromServer ? cameraY : serverY;
+            const isRed = Math.random() > 0.85; // 15% chance of red/threat packet
             return {
-                x: startX, y: startY,
-                endX, endY,
+                x: startX, y: startY, endX, endY,
                 progress: 0,
                 speed: 0.003 + Math.random() * 0.004,
                 char: matrixChars[Math.floor(Math.random() * matrixChars.length)],
                 size: 10 + Math.random() * 6,
                 opacity: 0.4 + Math.random() * 0.5,
                 trail: [],
-                curveOffset: (Math.random() - 0.5) * 80
+                curveOffset: (Math.random() - 0.5) * 80,
+                isRed: isRed
             };
+        }
+
+        // HUD: Draw targeting brackets around object
+        function drawBrackets(x, y, size, color, label) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.4 + Math.sin(frameCount * 0.03) * 0.15;
+            const s = size;
+            const corner = s * 0.25;
+
+            // Top-left
+            ctx.beginPath();
+            ctx.moveTo(x - s, y - s + corner);
+            ctx.lineTo(x - s, y - s);
+            ctx.lineTo(x - s + corner, y - s);
+            ctx.stroke();
+            // Top-right
+            ctx.beginPath();
+            ctx.moveTo(x + s - corner, y - s);
+            ctx.lineTo(x + s, y - s);
+            ctx.lineTo(x + s, y - s + corner);
+            ctx.stroke();
+            // Bottom-left
+            ctx.beginPath();
+            ctx.moveTo(x - s, y + s - corner);
+            ctx.lineTo(x - s, y + s);
+            ctx.lineTo(x - s + corner, y + s);
+            ctx.stroke();
+            // Bottom-right
+            ctx.beginPath();
+            ctx.moveTo(x + s - corner, y + s);
+            ctx.lineTo(x + s, y + s);
+            ctx.lineTo(x + s, y + s - corner);
+            ctx.stroke();
+
+            // Label under brackets
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.5;
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y + s + 16);
+            ctx.restore();
+        }
+
+        // HUD: Draw grid
+        function drawGrid() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 255, 65, 0.02)';
+            ctx.lineWidth = 0.5;
+            const gridSize = 60;
+            for (let x = 0; x < w; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            for (let y = 0; y < h; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // HUD: Corner info displays
+        function drawHUD() {
+            ctx.save();
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.globalAlpha = 0.35;
+
+            // Top-left: System status
+            ctx.fillStyle = 'rgba(0, 255, 65, 1)';
+            ctx.textAlign = 'left';
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            ctx.fillText('MANVARG DEFENSE NETWORK', 20, 25);
+            ctx.globalAlpha = 0.25;
+            ctx.fillText('SYS.TIME: ' + timeStr, 20, 40);
+            ctx.fillText('STATUS: OPERATIONAL', 20, 55);
+            ctx.fillText('NODES: ' + dataPackets.length + ' ACTIVE', 20, 70);
+
+            // Top-right: Coordinates
+            ctx.textAlign = 'right';
+            ctx.globalAlpha = 0.25;
+            ctx.fillText('59.8586°N 17.6389°E', w - 20, 25);
+            ctx.fillText('FRAME: ' + String(frameCount).padStart(6, '0'), w - 20, 40);
+            ctx.fillText('UPLINK: SECURE', w - 20, 55);
+
+            // Bottom-left: Feed info
+            ctx.textAlign = 'left';
+            ctx.globalAlpha = 0.2;
+            ctx.fillText('FEED: ENCRYPTED AES-256', 20, h - 25);
+
+            // Scanning line (horizontal)
+            const scanY = (frameCount * 0.5) % h;
+            ctx.globalAlpha = 0.08;
+            ctx.strokeStyle = 'rgba(0, 255, 65, 1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, scanY);
+            ctx.lineTo(w, scanY);
+            ctx.stroke();
+
+            // Scan line glow
+            const grad = ctx.createLinearGradient(0, scanY - 20, 0, scanY + 20);
+            grad.addColorStop(0, 'rgba(0, 255, 65, 0)');
+            grad.addColorStop(0.5, 'rgba(0, 255, 65, 0.03)');
+            grad.addColorStop(1, 'rgba(0, 255, 65, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, scanY - 20, w, 40);
+
+            ctx.restore();
+        }
+
+        // Draw radar/scan circle near camera
+        function drawRadar(x, y) {
+            ctx.save();
+            scanAngle += 0.015;
+            const radius = 50;
+            ctx.globalAlpha = 0.12;
+            ctx.strokeStyle = 'rgba(255, 50, 50, 0.6)';
+            ctx.lineWidth = 0.5;
+
+            // Concentric circles
+            for (let r = 20; r <= radius; r += 15) {
+                ctx.beginPath();
+                ctx.arc(x, y - 90, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            // Cross
+            ctx.beginPath();
+            ctx.moveTo(x - radius, y - 90);
+            ctx.lineTo(x + radius, y - 90);
+            ctx.moveTo(x, y - 90 - radius);
+            ctx.lineTo(x, y - 90 + radius);
+            ctx.stroke();
+
+            // Sweep line
+            ctx.globalAlpha = 0.25;
+            ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 90);
+            ctx.lineTo(
+                x + Math.cos(scanAngle) * radius,
+                y - 90 + Math.sin(scanAngle) * radius
+            );
+            ctx.stroke();
+
+            // Sweep trail
+            ctx.globalAlpha = 0.06;
+            ctx.fillStyle = 'rgba(255, 50, 50, 1)';
+            ctx.beginPath();
+            ctx.moveTo(x, y - 90);
+            ctx.arc(x, y - 90, radius, scanAngle - 0.5, scanAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
         }
 
         function drawServer(x, y) {
@@ -342,13 +692,14 @@
             const imgW = imgH * (dcImg.width / dcImg.height);
             ctx.globalAlpha = 0.7;
             ctx.drawImage(dcImg, x - imgW/2, y - imgH/2, imgW, imgH);
-            // Green tint overlay
             ctx.globalCompositeOperation = 'multiply';
             ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
             ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1;
             ctx.restore();
+            // HUD brackets
+            drawBrackets(x, y, Math.max(imgW, imgH) * 0.55, 'rgba(0, 255, 65, 0.6)', 'VMS-NODE-01');
         }
 
         function drawCamera(x, y) {
@@ -358,34 +709,39 @@
             const imgW = imgH * (camImg.width / camImg.height);
             ctx.globalAlpha = 0.7;
             ctx.drawImage(camImg, x - imgW/2, y - imgH/2, imgW, imgH);
-            // Green tint overlay
             ctx.globalCompositeOperation = 'multiply';
             ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
             ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1;
             ctx.restore();
+            drawBrackets(x, y, Math.max(imgW, imgH) * 0.55, 'rgba(255, 50, 50, 0.5)', 'CAM-FEED-7K');
+            drawRadar(x, y);
         }
 
         function draw() {
-            // Semi-transparent black for trail effect
+            frameCount++;
             ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
             ctx.fillRect(0, 0, w, h);
 
-            const fontSize = 14;
+            // Draw background grid (very subtle)
+            if (frameCount % 3 === 0) drawGrid();
 
-            // Matrix rain (subtle background)
+            const fontSize = 14;
             ctx.font = fontSize + 'px monospace';
             for (let i = 0; i < columns; i++) {
                 const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
                 const x = i * fontSize;
                 const y = rainDrops[i] * fontSize;
-
-                // Dimmer rain in the middle where content is
                 const centerDist = Math.abs(x - w/2) / (w/2);
                 const opacity = 0.04 + centerDist * 0.06;
 
-                ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+                // Occasional red characters
+                if (Math.random() > 0.97) {
+                    ctx.fillStyle = `rgba(255, 50, 50, ${opacity * 0.8})`;
+                } else {
+                    ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+                }
                 ctx.fillText(char, x, y);
 
                 if (y > h && Math.random() > 0.98) {
@@ -394,51 +750,47 @@
                 rainDrops[i] += 0.3;
             }
 
-            // Draw server and camera
             drawServer(serverX, serverY);
             drawCamera(cameraX, cameraY);
+
+            // HUD overlay
+            drawHUD();
 
             // Spawn new packets
             if (Math.random() > 0.94) {
                 dataPackets.push(createPacket(Math.random() > 0.3));
             }
 
-            // Update and draw packets
             dataPackets = dataPackets.filter(p => p.progress <= 1);
             for (const p of dataPackets) {
                 p.progress += p.speed;
-
-                // Bezier curve path
                 const t = p.progress;
                 const midX = (p.x + p.endX) / 2;
                 const midY = (p.y + p.endY) / 2 + p.curveOffset;
-
                 const cx = (1-t)*(1-t)*p.x + 2*(1-t)*t*midX + t*t*p.endX;
                 const cy = (1-t)*(1-t)*p.y + 2*(1-t)*t*midY + t*t*p.endY;
 
-                // Trail
                 p.trail.push({x: cx, y: cy});
                 if (p.trail.length > 12) p.trail.shift();
 
-                // Draw trail
+                const baseColor = p.isRed ? '255, 50, 50' : '0, 255, 65';
+
                 for (let i = 0; i < p.trail.length; i++) {
                     const tp = p.trail[i];
                     const trailOpacity = (i / p.trail.length) * p.opacity * 0.4;
-                    ctx.fillStyle = `rgba(0, 255, 65, ${trailOpacity})`;
+                    ctx.fillStyle = `rgba(${baseColor}, ${trailOpacity})`;
                     ctx.font = `${p.size * 0.7}px monospace`;
                     const trailChar = matrixChars[Math.floor(Math.random() * matrixChars.length)];
                     ctx.fillText(trailChar, tp.x, tp.y);
                 }
 
-                // Draw main character
                 const glow = p.opacity * (0.7 + Math.sin(Date.now() * 0.01) * 0.3);
-                ctx.fillStyle = `rgba(0, 255, 65, ${glow})`;
+                ctx.fillStyle = `rgba(${baseColor}, ${glow})`;
                 ctx.font = `bold ${p.size}px monospace`;
                 p.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
                 ctx.fillText(p.char, cx, cy);
 
-                // Glow effect
-                ctx.shadowColor = 'rgba(0, 255, 65, 0.5)';
+                ctx.shadowColor = `rgba(${baseColor}, 0.5)`;
                 ctx.shadowBlur = 8;
                 ctx.fillText(p.char, cx, cy);
                 ctx.shadowBlur = 0;
@@ -450,7 +802,6 @@
         resize();
         window.addEventListener('resize', resize);
 
-        // Initialize with some packets
         for (let i = 0; i < 8; i++) {
             const p = createPacket(Math.random() > 0.3);
             p.progress = Math.random() * 0.8;
