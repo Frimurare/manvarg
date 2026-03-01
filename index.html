@@ -75,7 +75,7 @@
                         </svg>
                     </div>
                     <h3>Storskaliga system</h3>
-                    <p>Djup erfarenhet av miljöer med tusentals kameror, distribuerade servrar och komplexa integrationer. Vi förstår utmaningarna som uppstår först vid riktigt stor skala.</p>
+                    <p>Djup erfarenhet av VMS i miljöer med tusentals kameror, distribuerade servrar och komplexa integrationer. Vi förstår utmaningarna som uppstår vid riktigt stor skala.</p>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
@@ -88,7 +88,7 @@
                         </svg>
                     </div>
                     <h3>VMS-plattformar</h3>
-                    <p>Expertkunskap inom ledande VMS-plattformar från insidan - val, dimensionering, konfiguration och optimering för maximal prestanda och driftssäkerhet.</p>
+                    <p>Expertkunskap inom ledande VMS-plattformar från insidan - val, dimensionering, konfiguration och optimering för maximal prestanda, driftssäkerhet och cybersäkerhet.</p>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
@@ -110,7 +110,7 @@
                         </svg>
                     </div>
                     <h3>20+ års erfarenhet</h3>
-                    <p>Två decennier av praktisk erfarenhet från både leverantör- och kundsidan ger ett unikt perspektiv som få i branschen kan matcha.</p>
+                    <p>Två decennier av praktisk erfarenhet från både leverantör- och kundsidan ger ett unikt perspektiv.</p>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@
                         </li>
                         <li>
                             <strong>Ert språk, inte leverantörens</strong>
-                            <span>Vi översätter teknisk komplexitet till begripliga beslut. Ni får klarhet, inte fler frågetecken.</span>
+                            <span>Vi översätter teknisk komplexitet till begripliga beslut. Vi erbjuder er klarhet, inte fler frågetecken.</span>
                         </li>
                     </ul>
                     <a href="#kontakt" class="btn btn-primary">Kontakta oss</a>
@@ -289,11 +289,19 @@
         let w, h, particles, columns, rainDrops;
 
         const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-        const greenColor = { r: 0, g: 255, b: 65 };
 
         // Server and camera positions (relative)
         let serverX, serverY, cameraX, cameraY;
         let dataPackets = [];
+
+        // Load images
+        const dcImg = new Image();
+        dcImg.src = 'assets/images/dc.png';
+        const camImg = new Image();
+        camImg.src = 'assets/images/kamerun.png';
+        let imagesLoaded = 0;
+        dcImg.onload = () => imagesLoaded++;
+        camImg.onload = () => imagesLoaded++;
 
         function resize() {
             w = canvas.width = canvas.parentElement.offsetWidth;
@@ -328,76 +336,34 @@
         }
 
         function drawServer(x, y) {
+            if (imagesLoaded < 2) return;
             ctx.save();
-            const sw = 70, sh = 90;
-            // Server rack
-            ctx.strokeStyle = 'rgba(0, 255, 65, 0.4)';
-            ctx.lineWidth = 1.5;
-            ctx.fillStyle = 'rgba(0, 255, 65, 0.03)';
-            ctx.fillRect(x - sw/2, y - sh/2, sw, sh);
-            ctx.strokeRect(x - sw/2, y - sh/2, sw, sh);
-            // Drive bays
-            for (let i = 0; i < 4; i++) {
-                const by = y - sh/2 + 8 + i * 20;
-                ctx.strokeStyle = 'rgba(0, 255, 65, 0.3)';
-                ctx.strokeRect(x - sw/2 + 8, by, sw - 16, 14);
-                // Blinking LED
-                ctx.fillStyle = `rgba(0, 255, 65, ${0.3 + Math.random() * 0.7})`;
-                ctx.fillRect(x + sw/2 - 14, by + 4, 4, 6);
-            }
-            // Label
-            ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
-            ctx.font = 'bold 9px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('VMS', x, y + sh/2 + 14);
+            const imgH = Math.min(160, h * 0.28);
+            const imgW = imgH * (dcImg.width / dcImg.height);
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(dcImg, x - imgW/2, y - imgH/2, imgW, imgH);
+            // Green tint overlay
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
+            ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1;
             ctx.restore();
         }
 
         function drawCamera(x, y) {
+            if (imagesLoaded < 2) return;
             ctx.save();
-            ctx.strokeStyle = 'rgba(0, 255, 65, 0.4)';
-            ctx.lineWidth = 1.5;
-            // Camera body
-            ctx.fillStyle = 'rgba(0, 255, 65, 0.03)';
-            ctx.beginPath();
-            ctx.moveTo(x - 30, y - 15);
-            ctx.lineTo(x + 15, y - 20);
-            ctx.lineTo(x + 15, y + 20);
-            ctx.lineTo(x - 30, y + 15);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            // Lens
-            ctx.beginPath();
-            ctx.moveTo(x + 15, y - 12);
-            ctx.lineTo(x + 35, y - 8);
-            ctx.lineTo(x + 35, y + 8);
-            ctx.lineTo(x + 15, y + 12);
-            ctx.closePath();
-            ctx.fillStyle = 'rgba(0, 255, 65, 0.06)';
-            ctx.fill();
-            ctx.stroke();
-            // Lens glass
-            ctx.beginPath();
-            ctx.arc(x + 35, y, 6, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(0, 255, 65, ${0.3 + Math.random() * 0.4})`;
-            ctx.stroke();
-            // IR LED indicator
-            ctx.fillStyle = `rgba(0, 255, 65, ${0.4 + Math.random() * 0.6})`;
-            ctx.beginPath();
-            ctx.arc(x + 35, y, 2, 0, Math.PI * 2);
-            ctx.fill();
-            // Mount
-            ctx.strokeStyle = 'rgba(0, 255, 65, 0.3)';
-            ctx.beginPath();
-            ctx.moveTo(x - 30, y);
-            ctx.lineTo(x - 45, y - 25);
-            ctx.stroke();
-            // Label
-            ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
-            ctx.font = 'bold 9px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('CAMERA', x, y + 40);
+            const imgH = Math.min(130, h * 0.22);
+            const imgW = imgH * (camImg.width / camImg.height);
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(camImg, x - imgW/2, y - imgH/2, imgW, imgH);
+            // Green tint overlay
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
+            ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1;
             ctx.restore();
         }
 
