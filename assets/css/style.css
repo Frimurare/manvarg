@@ -140,7 +140,7 @@ img {
     position: relative;
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     text-align: center;
     overflow: hidden;
@@ -157,7 +157,7 @@ img {
 .hero-content {
     position: relative;
     z-index: 1;
-    padding: 120px 24px 80px;
+    padding: 18vh 24px 80px;
 }
 
 .hero-logo {
