@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manvarg – Musik</title>
+    <title>Manvarg</title>
     <meta name="description" content="Manvarg – musik av Ulf Holmström. Lyssna på Spotify och YouTube Music. Kontakt: uffe.holmstrom@gmail.com">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="canonical" href="https://manvarg.se/">
-    <meta property="og:title" content="Manvarg – Musik">
+    <meta property="og:title" content="Manvarg">
     <meta property="og:description" content="Lyssna på Manvarg på Spotify och YouTube Music. Kontakt: uffe.holmstrom@gmail.com">
     <meta property="og:url" content="https://manvarg.se/">
     <meta property="og:image" content="https://manvarg.se/assets/images/logo.png">
@@ -65,18 +65,17 @@
         }
         .contact a:hover { color: var(--spotify); border-color: var(--spotify); }
         .contact p { margin-top: 10px; color: var(--muted); font-size: .95rem; }
-        footer { margin-top: auto; padding-top: 40px; color: var(--muted); font-size: .85rem; }
+        footer { margin-top: auto; padding-top: 40px; color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: 12px; }
+        .mail-icon { display: inline-flex; color: var(--fg); }
+        .mail-icon svg { width: 22px; height: 22px; fill: currentColor; }
+        .mail-icon:hover { color: var(--spotify); }
+        .mail-icon:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; border-radius: 4px; }
         @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
     </style>
 </head>
 <body>
     <main>
         <img class="logo" src="assets/images/logo.png" alt="Manvarg">
-
-        <div>
-            <h1>Musik av Manvarg</h1>
-            <p class="lead">Du hittar mig på Spotify och YouTube Music. Lyssna, följ och hör gärna av dig.</p>
-        </div>
 
         <div class="links">
             <a class="btn btn-spotify" href="https://open.spotify.com/artist/1tDrz9RD0NeK2ni1LSZtBg" target="_blank" rel="noopener">
@@ -94,12 +93,16 @@
         </div>
 
         <section class="contact" id="kontakt">
-            <div class="label">Kontakt</div>
+            <div class="label">Contact</div>
             <a href="mailto:uffe.holmstrom@gmail.com">uffe.holmstrom@gmail.com</a>
-            <p>Bokningar, samarbeten och frågor om musiken.</p>
         </section>
     </main>
 
-    <footer>© 2026 Manvarg · Ulf Holmström · <a href="mailto:uffe.holmstrom@gmail.com" style="color:inherit">uffe.holmstrom@gmail.com</a></footer>
+    <footer>
+        <span>© 2026 Manvarg · Ulf Holmström</span>
+        <a class="mail-icon" href="mailto:uffe.holmstrom@gmail.com" aria-label="E-post" title="uffe.holmstrom@gmail.com">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2.4V17h16V7.4l-8 5.3-8-5.3zM5.4 7l6.6 4.4L18.6 7H5.4z"/></svg>
+        </a>
+    </footer>
 </body>
 </html>
