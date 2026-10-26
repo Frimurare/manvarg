@@ -3,790 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manvarg AB - Enterprise CCTV & VMS-konsulting</title>
-    <meta name="description" content="Manvarg AB - strategisk rådgivning och konsulting inom storskalig videoövervakning, VMS-plattformar och säkerhetsarkitektur. Erfarenhet från Sveriges största kamerasystem.">
+    <title>Manvarg – Musik</title>
+    <meta name="description" content="Manvarg – musik av Ulf Holmström. Lyssna på Spotify och YouTube Music. Kontakt: uffe.holmstrom@gmail.com">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="canonical" href="https://manvarg.se/">
+    <meta property="og:title" content="Manvarg – Musik">
+    <meta property="og:description" content="Lyssna på Manvarg på Spotify och YouTube Music. Kontakt: uffe.holmstrom@gmail.com">
+    <meta property="og:url" content="https://manvarg.se/">
+    <meta property="og:image" content="https://manvarg.se/assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Scan-line overlay */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            z-index: 9999;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.03) 2px,
-                rgba(0, 0, 0, 0.03) 4px
-            );
+        :root {
+            --bg: #ffffff;
+            --fg: #111111;
+            --muted: #6b6b6b;
+            --line: #e6e6e6;
+            --spotify: #1DB954;
+            --youtube: #FF0000;
         }
-
-        #matrix-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-        }
-        .hero { position: relative; }
-        .hero-bg { z-index: 1; }
-        .hero-content { z-index: 2; position: relative; padding-top: 70px; }
-
-        /* Typewriter cursor */
-        .typewriter-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background: rgba(0, 255, 65, 0.8);
-            margin-left: 2px;
-            vertical-align: text-bottom;
-            animation: blink-cursor 0.8s step-end infinite;
-        }
-        @keyframes blink-cursor {
-            50% { opacity: 0; }
-        }
-
-        /* Glitch effect on section titles */
-        .section-title, .detail-text h2 {
-            position: relative;
-        }
-        .section-title:hover, .detail-text h2:hover {
-            animation: glitch-text 0.3s ease;
-        }
-        @keyframes glitch-text {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
-            40% { transform: translate(2px, -1px); }
-            60% { transform: translate(-1px, -1px); filter: hue-rotate(0deg); }
-            80% { transform: translate(1px, 1px); }
-            100% { transform: translate(0); }
-        }
-
-        /* Card scan line on hover */
-        .service-card {
-            position: relative;
-            overflow: hidden;
-        }
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.6), transparent);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3), 0 0 30px rgba(0, 255, 65, 0.1);
-            transition: none;
-        }
-        .service-card:hover::before {
-            animation: card-scan 1.5s ease-in-out;
-        }
-        @keyframes card-scan {
-            0% { top: -2%; }
-            100% { top: 102%; }
-        }
-
-        /* Tech border glow on cards */
-        .service-card:hover {
-            border-color: rgba(0, 255, 65, 0.15) !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.02), 0 0 1px rgba(0, 255, 65, 0.1) !important;
-        }
-
-        /* HUD-style corner brackets on hero */
-        .hero-content::before,
-        .hero-content::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-color: rgba(0, 255, 65, 0.15);
-            border-style: solid;
-            pointer-events: none;
-        }
-        .hero-content::before {
-            top: 50px;
-            left: 0;
-            border-width: 1px 0 0 1px;
-        }
-        .hero-content::after {
-            bottom: 60px;
-            right: 0;
-            border-width: 0 1px 1px 0;
-        }
-
-        /* Subtle green accent on hero tagline */
-        .hero-tagline {
-            font-family: 'JetBrains Mono', 'Inter', monospace !important;
-            font-size: 1rem !important;
-            letter-spacing: 0.05em !important;
-            color: rgba(0, 255, 65, 0.5) !important;
-        }
-
-        /* Red Skynet eye pulse on contact CTA */
-        .nav-link-cta {
-            position: relative;
-            overflow: hidden;
-        }
-        .nav-link-cta::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 0; height: 0;
-            background: radial-gradient(circle, rgba(255, 0, 0, 0.15), transparent 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-        }
-        .nav-link-cta:hover::after {
-            width: 200px;
-            height: 200px;
-        }
-
-        /* Animated border on visual cards */
-        .visual-card {
-            position: relative;
-            overflow: hidden;
-        }
-        .visual-card::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(0, 255, 65, 0.08), transparent, transparent);
-            animation: rotate-border 8s linear infinite;
-        }
-        .visual-card > * {
-            position: relative;
-            z-index: 1;
-        }
-        @keyframes rotate-border {
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Status indicator in footer */
-        .system-status {
-            display: inline-flex;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: rgba(0, 255, 65, 0.5);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            padding: 48px 16px 40px;
+            text-align: center;
         }
-        .status-dot {
-            width: 6px; height: 6px;
-            background: rgba(0, 255, 65, 0.7);
-            border-radius: 50%;
-            animation: pulse-dot 2s ease-in-out infinite;
+        main { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; gap: 36px; }
+        .logo { width: min(420px, 80vw); height: auto; display: block; }
+        h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+        .lead { font-size: 1.1rem; color: var(--muted); max-width: 46ch; }
+        .links { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 24px; border-radius: 999px;
+            font-weight: 600; font-size: 1rem; text-decoration: none;
+            color: #fff; transition: transform .12s ease, opacity .12s ease;
         }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 0.4; box-shadow: 0 0 2px rgba(0, 255, 65, 0.3); }
-            50% { opacity: 1; box-shadow: 0 0 8px rgba(0, 255, 65, 0.6); }
+        .btn:hover { transform: translateY(-1px); opacity: .92; }
+        .btn:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+        .btn svg { width: 22px; height: 22px; fill: currentColor; flex: none; }
+        .btn-spotify { background: var(--spotify); }
+        .btn-youtube { background: var(--youtube); }
+        .player { width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+        .player iframe { display: block; width: 100%; height: 352px; border: 0; }
+        .contact {
+            width: 100%; padding: 28px 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
         }
+        .contact .label { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; color: var(--muted); margin-bottom: 10px; }
+        .contact a {
+            font-size: clamp(1.25rem, 4.5vw, 1.75rem); font-weight: 700; color: var(--fg);
+            text-decoration: none; border-bottom: 2px solid var(--fg); word-break: break-all;
+        }
+        .contact a:hover { color: var(--spotify); border-color: var(--spotify); }
+        .contact p { margin-top: 10px; color: var(--muted); font-size: .95rem; }
+        footer { margin-top: auto; padding-top: 40px; color: var(--muted); font-size: .85rem; }
+        @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
     </style>
 </head>
 <body>
+    <main>
+        <img class="logo" src="assets/images/logo.png" alt="Manvarg">
 
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="container nav-container">
-            <a href="#" class="nav-logo">
-                <img src="assets/images/logo-white.png" alt="Manvarg AB" class="nav-logo-img">
+        <div>
+            <h1>Musik av Manvarg</h1>
+            <p class="lead">Du hittar mig på Spotify och YouTube Music. Lyssna, följ och hör gärna av dig.</p>
+        </div>
+
+        <div class="links">
+            <a class="btn btn-spotify" href="https://open.spotify.com/artist/1tDrz9RD0NeK2ni1LSZtBg" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.5 17.32a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.57-1.04 8.5-.59 11.66 1.34.35.22.46.68.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.56-11.97-1.4a.94.94 0 1 1-.54-1.8c4.36-1.32 9.78-.68 13.49 1.6.44.27.58.85.31 1.29zm.13-3.4C15.25 8.35 8.9 8.14 5.2 9.26a1.13 1.13 0 1 1-.65-2.16c4.25-1.29 11.3-1.04 15.76 1.61a1.13 1.13 0 0 1-1.21 1.94z"/></svg>
+                Lyssna på Spotify
             </a>
-            <button class="nav-toggle" id="nav-toggle" aria-label="Meny">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#expertis" class="nav-link">Expertis</a></li>
-                <li><a href="#tjänster" class="nav-link">Tjänster</a></li>
-                <li><a href="#approach" class="nav-link">Arbetssätt</a></li>
-                <li><a href="#kontakt" class="nav-link nav-link-cta">Kontakta oss</a></li>
-            </ul>
+            <a class="btn btn-youtube" href="https://music.youtube.com/channel/UCZ328DLkQSnhR-dSIDq0bTQ" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 19.1A7.1 7.1 0 1 1 12 4.9a7.1 7.1 0 0 1 0 14.2zm0-12.8a5.7 5.7 0 1 0 0 11.4 5.7 5.7 0 0 0 0-11.4zM9.9 15.2V8.8L15.4 12l-5.5 3.2z"/></svg>
+                YouTube Music
+            </a>
         </div>
-    </nav>
 
-    <!-- Hero -->
-    <header class="hero">
-        <canvas id="matrix-canvas"></canvas>
-        <div class="hero-bg"></div>
-        <div class="container hero-content">
-            <img src="assets/images/logo-white.png" alt="Manvarg AB" class="hero-logo">
-            <p class="hero-tagline" id="hero-tagline"></p>
-            <div class="hero-buttons">
-                <a href="#expertis" class="btn btn-primary">Vår expertis</a>
-                <a href="#kontakt" class="btn btn-outline">Boka konsultation</a>
-            </div>
+        <div class="player">
+            <iframe title="Manvarg på Spotify" src="https://open.spotify.com/embed/artist/1tDrz9RD0NeK2ni1LSZtBg?utm_source=generator" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
         </div>
-    </header>
 
-    <!-- Expertise / Trust section -->
-    <section class="services" id="expertis">
-        <div class="container">
-            <h2 class="section-title">Enterprise-expertis på en annan nivå</h2>
-            <p class="section-subtitle">Vi har hands-on erfarenhet från design och arkitektur av några av Sveriges största och mest komplexa kamerasystem - med tiotusentals kameror i verksamhetskritiska miljöer.</p>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="6" y="20" width="40" height="28" rx="4" stroke="currentColor" stroke-width="3"/>
-                            <path d="M46 30L58 22V46L46 38" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                            <circle cx="26" cy="34" r="6" stroke="currentColor" stroke-width="3"/>
-                        </svg>
-                    </div>
-                    <h3>Storskaliga system</h3>
-                    <p>Djup erfarenhet av VMS i miljöer med tusentals kameror, distribuerade servrar och komplexa integrationer. Vi förstår utmaningarna som uppstår vid riktigt stor skala.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="8" y="12" width="48" height="32" rx="4" stroke="currentColor" stroke-width="3"/>
-                            <path d="M20 52H44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M32 44V52" stroke="currentColor" stroke-width="3"/>
-                            <circle cx="32" cy="28" r="8" stroke="currentColor" stroke-width="2.5"/>
-                            <path d="M28 28L31 31L36 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <h3>VMS-plattformar</h3>
-                    <p>Expertkunskap inom ledande VMS-plattformar från insidan - val, dimensionering, konfiguration och optimering för maximal prestanda, driftssäkerhet och cybersäkerhet.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M32 8L56 20V44L32 56L8 44V20L32 8Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                            <path d="M32 32V56" stroke="currentColor" stroke-width="3"/>
-                            <path d="M32 32L56 20" stroke="currentColor" stroke-width="3"/>
-                            <path d="M32 32L8 20" stroke="currentColor" stroke-width="3"/>
-                        </svg>
-                    </div>
-                    <h3>Arkitektur & infrastruktur</h3>
-                    <p>Design av skalbara serverlösningar, lagringsarkitektur, nätverksdesign och redundans för miljöer där avbrott inte är ett alternativ.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="3"/>
-                            <path d="M32 16V32L42 42" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <h3>20+ års erfarenhet</h3>
-                    <p>Två decennier av praktisk erfarenhet från både leverantör- och kundsidan ger ett unikt perspektiv.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section class="contact" id="kontakt">
+            <div class="label">Kontakt</div>
+            <a href="mailto:uffe.holmstrom@gmail.com">uffe.holmstrom@gmail.com</a>
+            <p>Bokningar, samarbeten och frågor om musiken.</p>
+        </section>
+    </main>
 
-    <!-- Services detail -->
-    <section class="detail-section cctv-section" id="tjänster">
-        <div class="container">
-            <div class="detail-content">
-                <div class="detail-text">
-                    <span class="detail-label">Tjänster</span>
-                    <h2>Hur vi hjälper er</h2>
-                    <p class="detail-intro">Vi erbjuder oberoende, tillverkarneutral rådgivning för organisationer som behöver någon som verkligen förstår storskalig kameraövervakning - från första skissen till driftsatt system.</p>
-                    <ul class="detail-list">
-                        <li>
-                            <strong>Förstudie & behovsanalys</strong>
-                            <span>Vi kartlägger era behov, utmaningar och krav - och ger er en tydlig bild av vad som krävs för att nå målet.</span>
-                        </li>
-                        <li>
-                            <strong>Systemdesign & dimensionering</strong>
-                            <span>Komplett arkitektur - kameraval, serverkapacitet, lagringsbehov, nätverkstopologi och redundansplanering.</span>
-                        </li>
-                        <li>
-                            <strong>VMS-val & upphandlingsstöd</strong>
-                            <span>Oberoende utvärdering av VMS-plattformar baserat på era unika krav. Vi hjälper er välja rätt - inte det som ger oss provision.</span>
-                        </li>
-                        <li>
-                            <strong>Second opinion & revision</strong>
-                            <span>Har ni redan fått en offert eller ett förslag? Vi granskar och ger en ärlig bedömning baserad på verklig erfarenhet.</span>
-                        </li>
-                        <li>
-                            <strong>Projektledning & driftstöd</strong>
-                            <span>Hands-on stöd genom hela projektet - från upphandling till driftsättning och överlämning.</span>
-                        </li>
-                    </ul>
-                    <a href="#kontakt" class="btn btn-primary">Boka konsultation</a>
-                </div>
-                <div class="detail-visual">
-                    <div class="visual-card cctv-visual">
-                        <svg viewBox="0 0 300 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="30" y="20" width="240" height="150" rx="10" stroke="currentColor" stroke-width="2.5" opacity="0.3"/>
-                            <rect x="45" y="35" width="100" height="65" rx="4" stroke="currentColor" stroke-width="2"/>
-                            <rect x="155" y="35" width="100" height="65" rx="4" stroke="currentColor" stroke-width="2"/>
-                            <rect x="45" y="110" width="100" height="45" rx="4" stroke="currentColor" stroke-width="2"/>
-                            <rect x="155" y="110" width="100" height="45" rx="4" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="95" cy="67" r="15" stroke="currentColor" stroke-width="2" opacity="0.5"/>
-                            <circle cx="205" cy="67" r="15" stroke="currentColor" stroke-width="2" opacity="0.5"/>
-                            <path d="M150 185V205" stroke="currentColor" stroke-width="3"/>
-                            <rect x="120" y="205" width="60" height="8" rx="2" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <span class="visual-text">Enterprise-klass</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Approach -->
-    <section class="detail-section film-section" id="approach">
-        <div class="container">
-            <div class="detail-content detail-content-reverse">
-                <div class="detail-text">
-                    <span class="detail-label">Arbetssätt</span>
-                    <h2>Oberoende & leverantörneutral</h2>
-                    <p class="detail-intro">Vi säljer inte kameror, mjukvara eller installationer. Vi säljer kunskap. Det innebär att våra råd alltid baseras på vad som är bäst för er - inte för oss.</p>
-                    <ul class="detail-list">
-                        <li>
-                            <strong>Från insidan av branschen</strong>
-                            <span>Bakgrund från ledande VMS-tillverkare ger oss djup förståelse för hur plattformarna verkligen fungerar - både styrkor och begränsningar.</span>
-                        </li>
-                        <li>
-                            <strong>Alla storlekar - men vi utmärker oss i det stora</strong>
-                            <span>Vi hjälper givetvis även mindre organisationer, men det är i komplexa enterprise-miljöer med hundratals eller tusentals kameror som vår erfarenhet verkligen gör skillnad.</span>
-                        </li>
-                        <li>
-                            <strong>Ert språk, inte leverantörens</strong>
-                            <span>Vi översätter teknisk komplexitet till begripliga beslut. Vi erbjuder er klarhet, inte fler frågetecken.</span>
-                        </li>
-                    </ul>
-                    <a href="#kontakt" class="btn btn-primary">Kontakta oss</a>
-                </div>
-                <div class="detail-visual">
-                    <div class="visual-card film-visual">
-                        <svg viewBox="0 0 300 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="150" cy="110" r="80" stroke="currentColor" stroke-width="2" opacity="0.15"/>
-                            <circle cx="150" cy="110" r="55" stroke="currentColor" stroke-width="2" opacity="0.25"/>
-                            <circle cx="150" cy="110" r="30" stroke="currentColor" stroke-width="2.5" opacity="0.4"/>
-                            <path d="M150 80V140" stroke="currentColor" stroke-width="2" opacity="0.6"/>
-                            <path d="M120 110H180" stroke="currentColor" stroke-width="2" opacity="0.6"/>
-                            <circle cx="150" cy="110" r="6" fill="currentColor" opacity="0.5"/>
-                        </svg>
-                        <span class="visual-text">Fokus på er verksamhet</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact-section" id="kontakt">
-        <div class="container">
-            <h2 class="section-title">Kontakta oss</h2>
-            <p class="section-subtitle">Berätta om ert projekt eller era utmaningar. Vi återkommer med hur vi kan hjälpa er.</p>
-            <div class="contact-info" style="max-width: 500px; margin: 0 auto;">
-                <div class="contact-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13L2 4"/></svg>
-                    <div>
-                        <strong>E-post</strong>
-                        <a href="mailto:ulf@manvarg.se">ulf@manvarg.se</a>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.73 20.99 20.45 21 20.18 21C10.63 21 3 13.37 3 3.82C3 3.55 3.01 3.27 3.03 3C3.07 2.44 3.52 2 4.08 2H7.08C7.57 2 7.99 2.36 8.07 2.85C8.14 3.28 8.25 3.7 8.39 4.11L6.69 5.81C8.07 8.33 10.17 10.43 12.69 11.81L14.39 10.11C14.8 10.25 15.22 10.36 15.65 10.43C16.14 10.51 16.5 10.93 16.5 11.42V16.92C16.5 17.47 16.05 17.92 15.5 17.92H22Z"/></svg>
-                    <div>
-                        <strong>Telefon</strong>
-                        <a href="tel:+46732688000">+46 73-268 80 00</a>
-                    </div>
-                </div>
-                <div class="contact-company" style="justify-content: center; border: none; margin: 0; padding: 0;">
-                    <img src="assets/images/logo-white.png" alt="Manvarg AB" class="contact-logo" style="height: 80px; filter: drop-shadow(0 0 25px rgba(0, 255, 65, 0.5)) drop-shadow(0 0 50px rgba(0, 255, 65, 0.3)) drop-shadow(0 0 80px rgba(0, 255, 65, 0.15));">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-brand">
-                <img src="assets/images/logo-white.png" alt="Manvarg AB" class="footer-logo">
-                <p>&copy; <span id="copyright-year"></span> Manvarg AB. Alla rättigheter förbehållna.</p>
-            </div>
-            <div class="footer-links">
-                <a href="#expertis">Expertis</a>
-                <a href="#tjänster">Tjänster</a>
-                <a href="#approach">Arbetssätt</a>
-                <a href="#kontakt">Kontakt</a>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 24px;">
-            <span class="system-status"><span class="status-dot"></span>System online</span>
-        </div>
-    </footer>
-
-    <script src="assets/js/main.js"></script>
-    <script>
-    // Auto-update copyright year
-    document.getElementById('copyright-year').textContent = new Date().getFullYear();
-
-    // Typewriter effect for hero tagline
-    (function() {
-        const el = document.getElementById('hero-tagline');
-        const text = 'Strategisk rådgivning och konsulting inom storskalig videoövervakning';
-        let i = 0;
-        const cursor = document.createElement('span');
-        cursor.className = 'typewriter-cursor';
-        el.appendChild(cursor);
-
-        function type() {
-            if (i < text.length) {
-                el.insertBefore(document.createTextNode(text.charAt(i)), cursor);
-                i++;
-                setTimeout(type, 35 + Math.random() * 25);
-            } else {
-                // Keep cursor blinking for a while, then remove
-                setTimeout(() => cursor.style.display = 'none', 4000);
-            }
-        }
-        setTimeout(type, 800);
-    })();
-
-    // Matrix/Skynet-style animation with HUD overlay
-    (function() {
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        let w, h, columns, rainDrops;
-        let frameCount = 0;
-
-        const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-
-        let serverX, serverY, cameraX, cameraY;
-        let dataPackets = [];
-        let scanAngle = 0;
-
-        // Load images
-        const dcImg = new Image();
-        dcImg.src = 'assets/images/dc.png';
-        const camImg = new Image();
-        camImg.src = 'assets/images/kamerun.png';
-        let imagesLoaded = 0;
-        dcImg.onload = () => imagesLoaded++;
-        camImg.onload = () => imagesLoaded++;
-
-        function resize() {
-            w = canvas.width = canvas.parentElement.offsetWidth;
-            h = canvas.height = canvas.parentElement.offsetHeight;
-            const fontSize = 14;
-            columns = Math.floor(w / fontSize);
-            rainDrops = new Array(columns).fill(0).map(() => Math.random() * -100);
-            serverX = w * 0.18;
-            serverY = h * 0.55;
-            cameraX = w * 0.82;
-            cameraY = h * 0.45;
-        }
-
-        function createPacket(fromServer) {
-            const startX = fromServer ? serverX : cameraX;
-            const startY = fromServer ? serverY : cameraY;
-            const endX = fromServer ? cameraX : serverX;
-            const endY = fromServer ? cameraY : serverY;
-            const isRed = Math.random() > 0.85; // 15% chance of red/threat packet
-            return {
-                x: startX, y: startY, endX, endY,
-                progress: 0,
-                speed: 0.003 + Math.random() * 0.004,
-                char: matrixChars[Math.floor(Math.random() * matrixChars.length)],
-                size: 10 + Math.random() * 6,
-                opacity: 0.4 + Math.random() * 0.5,
-                trail: [],
-                curveOffset: (Math.random() - 0.5) * 80,
-                isRed: isRed
-            };
-        }
-
-        // HUD: Draw targeting brackets around object
-        function drawBrackets(x, y, size, color, label) {
-            ctx.save();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.4 + Math.sin(frameCount * 0.03) * 0.15;
-            const s = size;
-            const corner = s * 0.25;
-
-            // Top-left
-            ctx.beginPath();
-            ctx.moveTo(x - s, y - s + corner);
-            ctx.lineTo(x - s, y - s);
-            ctx.lineTo(x - s + corner, y - s);
-            ctx.stroke();
-            // Top-right
-            ctx.beginPath();
-            ctx.moveTo(x + s - corner, y - s);
-            ctx.lineTo(x + s, y - s);
-            ctx.lineTo(x + s, y - s + corner);
-            ctx.stroke();
-            // Bottom-left
-            ctx.beginPath();
-            ctx.moveTo(x - s, y + s - corner);
-            ctx.lineTo(x - s, y + s);
-            ctx.lineTo(x - s + corner, y + s);
-            ctx.stroke();
-            // Bottom-right
-            ctx.beginPath();
-            ctx.moveTo(x + s - corner, y + s);
-            ctx.lineTo(x + s, y + s);
-            ctx.lineTo(x + s, y + s - corner);
-            ctx.stroke();
-
-            // Label under brackets
-            ctx.font = '10px "JetBrains Mono", monospace';
-            ctx.fillStyle = color;
-            ctx.globalAlpha = 0.5;
-            ctx.textAlign = 'center';
-            ctx.fillText(label, x, y + s + 16);
-            ctx.restore();
-        }
-
-        // HUD: Draw grid
-        function drawGrid() {
-            ctx.save();
-            ctx.strokeStyle = 'rgba(0, 255, 65, 0.02)';
-            ctx.lineWidth = 0.5;
-            const gridSize = 60;
-            for (let x = 0; x < w; x += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, h);
-                ctx.stroke();
-            }
-            for (let y = 0; y < h; y += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(w, y);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-
-        // HUD: Corner info displays
-        function drawHUD() {
-            ctx.save();
-            ctx.font = '10px "JetBrains Mono", monospace';
-            ctx.globalAlpha = 0.35;
-
-            // Top-left: System status
-            ctx.fillStyle = 'rgba(0, 255, 65, 1)';
-            ctx.textAlign = 'left';
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            ctx.fillText('MANVARG DEFENSE NETWORK', 20, 25);
-            ctx.globalAlpha = 0.25;
-            ctx.fillText('SYS.TIME: ' + timeStr, 20, 40);
-            ctx.fillText('STATUS: OPERATIONAL', 20, 55);
-            ctx.fillText('NODES: ' + dataPackets.length + ' ACTIVE', 20, 70);
-
-            // Top-right: Coordinates
-            ctx.textAlign = 'right';
-            ctx.globalAlpha = 0.25;
-            ctx.fillText('59.8586°N 17.6389°E', w - 20, 25);
-            ctx.fillText('FRAME: ' + String(frameCount).padStart(6, '0'), w - 20, 40);
-            ctx.fillText('UPLINK: SECURE', w - 20, 55);
-
-            // Bottom-left: Feed info
-            ctx.textAlign = 'left';
-            ctx.globalAlpha = 0.2;
-            ctx.fillText('FEED: ENCRYPTED AES-256', 20, h - 25);
-
-            // Scanning line (horizontal)
-            const scanY = (frameCount * 0.5) % h;
-            ctx.globalAlpha = 0.08;
-            ctx.strokeStyle = 'rgba(0, 255, 65, 1)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, scanY);
-            ctx.lineTo(w, scanY);
-            ctx.stroke();
-
-            // Scan line glow
-            const grad = ctx.createLinearGradient(0, scanY - 20, 0, scanY + 20);
-            grad.addColorStop(0, 'rgba(0, 255, 65, 0)');
-            grad.addColorStop(0.5, 'rgba(0, 255, 65, 0.03)');
-            grad.addColorStop(1, 'rgba(0, 255, 65, 0)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, scanY - 20, w, 40);
-
-            ctx.restore();
-        }
-
-        // Draw radar/scan circle near camera
-        function drawRadar(x, y) {
-            ctx.save();
-            scanAngle += 0.015;
-            const radius = 50;
-            ctx.globalAlpha = 0.12;
-            ctx.strokeStyle = 'rgba(255, 50, 50, 0.6)';
-            ctx.lineWidth = 0.5;
-
-            // Concentric circles
-            for (let r = 20; r <= radius; r += 15) {
-                ctx.beginPath();
-                ctx.arc(x, y - 90, r, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            // Cross
-            ctx.beginPath();
-            ctx.moveTo(x - radius, y - 90);
-            ctx.lineTo(x + radius, y - 90);
-            ctx.moveTo(x, y - 90 - radius);
-            ctx.lineTo(x, y - 90 + radius);
-            ctx.stroke();
-
-            // Sweep line
-            ctx.globalAlpha = 0.25;
-            ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(x, y - 90);
-            ctx.lineTo(
-                x + Math.cos(scanAngle) * radius,
-                y - 90 + Math.sin(scanAngle) * radius
-            );
-            ctx.stroke();
-
-            // Sweep trail
-            ctx.globalAlpha = 0.06;
-            ctx.fillStyle = 'rgba(255, 50, 50, 1)';
-            ctx.beginPath();
-            ctx.moveTo(x, y - 90);
-            ctx.arc(x, y - 90, radius, scanAngle - 0.5, scanAngle);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.restore();
-        }
-
-        function drawServer(x, y) {
-            if (imagesLoaded < 2) return;
-            ctx.save();
-            const imgH = Math.min(160, h * 0.28);
-            const imgW = imgH * (dcImg.width / dcImg.height);
-            ctx.globalAlpha = 0.7;
-            ctx.drawImage(dcImg, x - imgW/2, y - imgH/2, imgW, imgH);
-            ctx.globalCompositeOperation = 'multiply';
-            ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
-            ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1;
-            ctx.restore();
-            // HUD brackets
-            drawBrackets(x, y, Math.max(imgW, imgH) * 0.55, 'rgba(0, 255, 65, 0.6)', 'VMS-NODE-01');
-        }
-
-        function drawCamera(x, y) {
-            if (imagesLoaded < 2) return;
-            ctx.save();
-            const imgH = Math.min(130, h * 0.22);
-            const imgW = imgH * (camImg.width / camImg.height);
-            ctx.globalAlpha = 0.7;
-            ctx.drawImage(camImg, x - imgW/2, y - imgH/2, imgW, imgH);
-            ctx.globalCompositeOperation = 'multiply';
-            ctx.fillStyle = 'rgba(0, 180, 65, 0.3)';
-            ctx.fillRect(x - imgW/2, y - imgH/2, imgW, imgH);
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1;
-            ctx.restore();
-            drawBrackets(x, y, Math.max(imgW, imgH) * 0.55, 'rgba(255, 50, 50, 0.5)', 'CAM-FEED-7K');
-            drawRadar(x, y);
-        }
-
-        function draw() {
-            frameCount++;
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-            ctx.fillRect(0, 0, w, h);
-
-            // Draw background grid (very subtle)
-            if (frameCount % 3 === 0) drawGrid();
-
-            const fontSize = 14;
-            ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < columns; i++) {
-                const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                const x = i * fontSize;
-                const y = rainDrops[i] * fontSize;
-                const centerDist = Math.abs(x - w/2) / (w/2);
-                const opacity = 0.04 + centerDist * 0.06;
-
-                // Occasional red characters
-                if (Math.random() > 0.97) {
-                    ctx.fillStyle = `rgba(255, 50, 50, ${opacity * 0.8})`;
-                } else {
-                    ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
-                }
-                ctx.fillText(char, x, y);
-
-                if (y > h && Math.random() > 0.98) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i] += 0.3;
-            }
-
-            drawServer(serverX, serverY);
-            drawCamera(cameraX, cameraY);
-
-            // HUD overlay
-            drawHUD();
-
-            // Spawn new packets
-            if (Math.random() > 0.94) {
-                dataPackets.push(createPacket(Math.random() > 0.3));
-            }
-
-            dataPackets = dataPackets.filter(p => p.progress <= 1);
-            for (const p of dataPackets) {
-                p.progress += p.speed;
-                const t = p.progress;
-                const midX = (p.x + p.endX) / 2;
-                const midY = (p.y + p.endY) / 2 + p.curveOffset;
-                const cx = (1-t)*(1-t)*p.x + 2*(1-t)*t*midX + t*t*p.endX;
-                const cy = (1-t)*(1-t)*p.y + 2*(1-t)*t*midY + t*t*p.endY;
-
-                p.trail.push({x: cx, y: cy});
-                if (p.trail.length > 12) p.trail.shift();
-
-                const baseColor = p.isRed ? '255, 50, 50' : '0, 255, 65';
-
-                for (let i = 0; i < p.trail.length; i++) {
-                    const tp = p.trail[i];
-                    const trailOpacity = (i / p.trail.length) * p.opacity * 0.4;
-                    ctx.fillStyle = `rgba(${baseColor}, ${trailOpacity})`;
-                    ctx.font = `${p.size * 0.7}px monospace`;
-                    const trailChar = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                    ctx.fillText(trailChar, tp.x, tp.y);
-                }
-
-                const glow = p.opacity * (0.7 + Math.sin(Date.now() * 0.01) * 0.3);
-                ctx.fillStyle = `rgba(${baseColor}, ${glow})`;
-                ctx.font = `bold ${p.size}px monospace`;
-                p.char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                ctx.fillText(p.char, cx, cy);
-
-                ctx.shadowColor = `rgba(${baseColor}, 0.5)`;
-                ctx.shadowBlur = 8;
-                ctx.fillText(p.char, cx, cy);
-                ctx.shadowBlur = 0;
-            }
-
-            requestAnimationFrame(draw);
-        }
-
-        resize();
-        window.addEventListener('resize', resize);
-
-        for (let i = 0; i < 8; i++) {
-            const p = createPacket(Math.random() > 0.3);
-            p.progress = Math.random() * 0.8;
-            dataPackets.push(p);
-        }
-
-        draw();
-    })();
-    </script>
+    <footer>© 2026 Manvarg · Ulf Holmström · <a href="mailto:uffe.holmstrom@gmail.com" style="color:inherit">uffe.holmstrom@gmail.com</a></footer>
 </body>
 </html>
